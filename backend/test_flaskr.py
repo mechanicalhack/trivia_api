@@ -28,6 +28,27 @@ class TriviaTestCase(unittest.TestCase):
     def tearDown(self):
         """Executed after reach test"""
         pass
+    
+    def test_get_categories(self):
+        """ Get Categories """
+        res = self.client().get('/categories')
+
+        data = json.loads(res.data)
+  
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'],True)
+        self.assertTrue(data['categories'])
+
+    def test_get_questions(self):
+        """ Get Questions """
+        res = self.client().get('/questions')
+
+        data = json.loads(res.data)
+  
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'],True)
+        self.assertTrue(data['questions'])
+        self.assertTrue(len(data['questions']))
 
     """
     TODO

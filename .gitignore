@@ -13,3 +13,6 @@ ehthumbs.db
 Thumbs.db
 
 .idea/
+
+node_modules/
+frontend/package-lock.json
