@@ -13,8 +13,12 @@ def paginate_questions(request, selection):
     start =  (page - 1) * QUESTIONS_PER_PAGE
     end = start + QUESTIONS_PER_PAGE
 
-    questions = [question for question in selection]
-    current_questions = questions[start:end]
+    current_questions = {}
+    i = 0
+    for question in selection:
+      if i >= start and i < end:
+        current_questions[question] = selection[question]
+      i+=1
 
     return current_questions
 
@@ -70,30 +74,19 @@ def create_app(test_config=None):
         'category': q.category
       }
 
-    print('start')
-    print(questions[5])
-    print('end')
-
     current_questions = paginate_questions(request, questions)
 
-    print('start')
-    current_questions[5]
-    print('end')
-
-    converted = jsonify({
-      'success': True,
-      'questions': questions,
-      'total_questions': len(Question.query.all()),
-      # 'current_category': ,
-      
-    })
+    all_categories = Category.query.all()
+    categories = {}
+    for category in all_categories:
+      categories[category.id] = category.type
 
     return jsonify({
       'success': True,
-      'questions': questions,
+      'questions': current_questions,
       'total_questions': len(Question.query.all()),
-      # 'current_category': ,
-      
+      'categories': categories,
+      'current_category': {"1": "Science"}
     })
   
   '''
