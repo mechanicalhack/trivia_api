@@ -26,7 +26,7 @@ def create_app(test_config=None):
   # create and configure the app
   app = Flask(__name__)
   setup_db(app)
-  CORS(app)
+  CORS(app, resources={r"*": {"origins": "*"}})
 
   # CORS Headers
   @app.after_request
@@ -97,7 +97,9 @@ def create_app(test_config=None):
   This removal will persist in the database and when you refresh the page. 
   '''
 
-  # @app.route('/')
+  # @app.route('/remove_question', methods=['DELETE'])
+  # def remove_question():
+
   '''
   @TODO: 
   Create an endpoint to POST a new question, 
@@ -108,7 +110,9 @@ def create_app(test_config=None):
   the form will clear and the question will appear at the end of the last page
   of the questions list in the "List" tab.  
   '''
-
+  # @app.route('/add_question', methods=['POST'])
+  # def add_question():
+  
   '''
   @TODO: 
   Create a POST endpoint to get questions based on a search term. 

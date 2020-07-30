@@ -23,7 +23,7 @@ class TriviaTestCase(unittest.TestCase):
             self.db = SQLAlchemy()
             self.db.init_app(self.app)
             # create all tables
-            self.db.create_all()
+            self.db.create_all() 
     
     def tearDown(self):
         """Executed after reach test"""
@@ -49,6 +49,14 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'],True)
         self.assertTrue(data['questions'])
         self.assertTrue(len(data['questions']))
+
+    def test_remove_question(self):
+        """ Remove Question """
+        res = self.client().delete('/remove_question')
+
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'],True)
 
     """
     TODO
