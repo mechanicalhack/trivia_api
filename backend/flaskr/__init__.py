@@ -175,8 +175,6 @@ def create_app(test_config=None):
     previous_questions = body.get('previous_questions')
     quiz_category = body.get('quiz_category')
 
-    print('previous questions')
-    print(previous_questions)
     filtered_questions_by_category = Question.query.filter_by(category=str(quiz_category['id'])).all()
     filtered_questions_by_previous_questions = [question for question in filtered_questions_by_category if question.id not in previous_questions]
     if len(filtered_questions_by_previous_questions) > 0:
@@ -191,7 +189,6 @@ def create_app(test_config=None):
     else:
       new_quiz_question = None
     
-    print(new_quiz_question)
     return jsonify({
       'success': True,
       'question': new_quiz_question

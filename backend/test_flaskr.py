@@ -78,12 +78,12 @@ class TriviaTestCase(unittest.TestCase):
     def test_search_question(self):
         res = self.client().post('/questions/search', json={'searchTerm': 'new'})
         data = json.loads(res.data)
-        # print(data)
+        
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
-        # self.assertEqual(data['questions'], 'new question')
-        # self.assertEqual(data['total_questions'], 'new question')
-        # self.assertEqual(data['current_category'], 'new question')
+        self.assertEqual(data['questions'], [{'answer': 'new answer', 'category': 1, 'difficulty': 2, 'id': 24, 'question': 'new question'}])
+        self.assertEqual(data['total_questions'], 1)
+        self.assertEqual(data['current_category'], {})
 
     def test_questions_by_category(self):
         res = self.client().get('/categories/1/questions')
@@ -94,17 +94,12 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['current_category'], {'1': 'Science'} )
     
     def test_quiz(self):
-        res = self.client().post('/quizzes', json={'previous_questions': '', 'quiz_category': ''})
+        res = self.client().post('/quizzes', json={'previous_questions': [], 'quiz_category': {'type': 'Science', 'id': 1}})
         data = json.loads(res.data)
-
+     
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
-        self.assertEqual(data['question'], 'new question')
-
-    """
-    TODO
-    Write at least one test for each test for successful operation and for expected errors.
-    """
+        self.assertEqual(data['question']['category'], 1)
 
 
 # Make the tests conveniently executable
