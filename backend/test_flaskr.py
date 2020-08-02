@@ -50,13 +50,56 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['questions'])
         self.assertTrue(len(data['questions']))
 
-    def test_remove_question(self):
-        """ Remove Question """
-        res = self.client().delete('/remove_question')
-
+    def test_delete_question(self):
+        """ Delete Question """
+        res = self.client().get('/questions')
         data = json.loads(res.data)
+        
+        res1 = self.client().delete('/questions/' + str(data['questions'][0]['id']))
+        data1 = json.loads(res1.data)
+        
+        self.assertEqual(res1.status_code, 200)
+        self.assertEqual(data1['success'],True)
+        self.assertEqual(data1['deleted'],data['questions'][0]['id'])
+
+    def test_delete_question_422(self):
+        """ Delete Question 422 Error"""
+        res = self.client().delete('/questions/1')
+        
+        self.assertEqual(res.status_code, 422)
+
+    def test_add_new_question(self):
+        res = self.client().post('/questions', json={'question': 'new question', 'answer': 'new answer', 'category': 1, 'difficulty': 2})
+        data = json.loads(res.data)
+
         self.assertEqual(res.status_code, 200)
-        self.assertEqual(data['success'],True)
+        self.assertEqual(data['question'], "new question")
+
+    def test_search_question(self):
+        res = self.client().post('/questions/search', json={'searchTerm': 'new'})
+        data = json.loads(res.data)
+        # print(data)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        # self.assertEqual(data['questions'], 'new question')
+        # self.assertEqual(data['total_questions'], 'new question')
+        # self.assertEqual(data['current_category'], 'new question')
+
+    def test_questions_by_category(self):
+        res = self.client().get('/categories/1/questions')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(data['current_category'], {'1': 'Science'} )
+    
+    def test_quiz(self):
+        res = self.client().post('/quizzes', json={'previous_questions': '', 'quiz_category': ''})
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(data['question'], 'new question')
 
     """
     TODO
