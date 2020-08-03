@@ -98,8 +98,9 @@ def create_app(test_config=None):
     new_category = body.get('category')
     new_difficulty = body.get('difficulty')
 
+    if new_question == None or new_answer == None or new_difficulty == None or new_category == None:
+      abort(422)
     try:
-      
       question = Question(new_question, new_answer, new_category, new_difficulty)
       question.insert()
 
@@ -116,7 +117,9 @@ def create_app(test_config=None):
 
     search_term = body.get('searchTerm')
     
-   
+    if not isinstance(search_term, str):
+      abort(422)
+    
     results = Question.query.filter(Question.question.ilike('%' + search_term + '%')).all()
     number_of_results = Question.query.filter(Question.question.ilike('%' + search_term + '%')).count()
     
@@ -175,8 +178,12 @@ def create_app(test_config=None):
     previous_questions = body.get('previous_questions')
     quiz_category = body.get('quiz_category')
 
-    filtered_questions_by_category = Question.query.filter_by(category=str(quiz_category['id'])).all()
+    if(quiz_category['id'] == 0):
+      filtered_questions_by_category = Question.query.all()
+    else:
+      filtered_questions_by_category = Question.query.filter_by(category=str(quiz_category['id'])).all()
     filtered_questions_by_previous_questions = [question for question in filtered_questions_by_category if question.id not in previous_questions]
+
     if len(filtered_questions_by_previous_questions) > 0:
       random_new_question = random.choice(filtered_questions_by_previous_questions)
       new_quiz_question = {
@@ -199,7 +206,7 @@ def create_app(test_config=None):
       return jsonify({
           "success": False, 
           "error": 422,
-          "message": "unprocessable"
+          "message": "Unprocessable"
       }), 422
 
   @app.errorhandler(404)
@@ -217,6 +224,22 @@ def create_app(test_config=None):
           "error": 400,
           "message": "Bad Request"
       }), 400
+
+  @app.errorhandler(405)
+  def bad_request(error):
+      return jsonify({
+          "success": False, 
+          "error": 405,
+          "message": "Method Not Allowed"
+      }), 405
+
+  @app.errorhandler(500)
+  def bad_request(error):
+      return jsonify({
+          "success": False, 
+          "error": 500,
+          "message": "Internal Server Error"
+      }), 500
 
   return app
 
